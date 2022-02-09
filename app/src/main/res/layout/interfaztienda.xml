@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/modoPrestigioBtn"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#5C7AEA">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="ACT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.966"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976"
+        app:srcCompat="@android:drawable/ic_menu_help"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <ImageView
+        android:id="@+id/img_toldo_tienda"
+        android:layout_width="406dp"
+        android:layout_height="173dp"
+        android:paddingBottom="60sp"
+        app:layout_constraintBottom_toTopOf="@+id/str_titulo_tienda"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_volver_atras"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/tienda_background_image" />
+
+    <TextView
+        android:id="@+id/str_titulo_tienda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tienda2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#E6E6E6"
+        android:textSize="60sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.282" />
+
+    <Button
+        android:id="@+id/btn_volver_atras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#E6E6E6"
+        android:onClick="atras"
+        android:text="ATRÁS"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.08"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023" />
+
+    <TextView
+        android:id="@+id/tx_puntos_tienda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tx"
+        android:textColor="#1A237E"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.775"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.978"
+        tools:ignore="TextContrastCheck" />
+
+    <Button
+        android:id="@+id/btn_generar_Frase"
+        android:layout_width="231dp"
+        android:layout_height="90dp"
+        android:backgroundTint="#E6E6E6"
+        android:onClick="showCrearFrase"
+        android:text="CREA TU FRASE"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/btn_comprar_mejora"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_comprar_frase"
+        app:layout_constraintVertical_bias="0.55" />
+
+    <Button
+        android:id="@+id/btn_comprar_frase"
+        android:layout_width="231dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="296dp"
+        android:backgroundTint="#E6E6E6"
+        android:onClick="comprarFrase"
+        android:text="Comprar Frase"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_comprar_mejora"
+        android:layout_width="231dp"
+        android:layout_height="90dp"
+        android:layout_marginBottom="88dp"
+        android:backgroundTint="#E6E6E6"
+        android:onClick="mejorarClicks"
+        android:text="@string/comprar_mejora"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_tienda_skins"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#E6E6E6"
+        android:onClick="showTiendaSkins"
+        android:text="Skins"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/img_toldo_tienda"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.962"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/skins"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="28dp"
+        android:text="Cambia de skins!!"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/img_toldo_tienda"
+        app:layout_constraintEnd_toStartOf="@+id/btn_tienda_skins"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/creador"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="10dp"
+        android:text="Entra en el creador de frases."
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/btn_generar_Frase"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_comprar_frase" />
+
+    <TextView
+        android:id="@+id/generador"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:text="Entra en el generador de frases automaticas!!!"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/btn_comprar_frase"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/str_titulo_tienda" />
+
+    <TextView
+        android:id="@+id/mb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="9dp"
+        android:text="Dale y mejora a tope tu boton!!!"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/btn_comprar_mejora"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_generar_Frase" />
+
+    <Button
+        android:id="@+id/btn_modo_prestigio"
+        android:layout_width="126dp"
+        android:layout_height="65dp"
+        android:backgroundTint="#E6E6E6"
+        android:onClick="modoPrestigio"
+        android:text="@string/modo_prestigio"
+        android:textColor="#000000"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.007"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.989" />
+
+    <TextView
+        android:id="@+id/ayudaPrestigio"
+        android:layout_width="66dp"
+        android:layout_height="81dp"
+        android:backgroundTint="#E6E6E6"
+        android:text="Descubre tu mismo el misterio..."
+        android:textColor="@color/white"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.046"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.889" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

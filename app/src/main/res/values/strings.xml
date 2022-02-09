@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MyDrobe</string>
+    <string name="tienda">TIENDA</string>
+    <string name="click">CLICK</string>
+    <string name="elclickero">ELCLICKERO</string>
+    <string name="comprar_mejora">Comprar Mejora</string>
+    <string name="generar_frase">Generar Frase</string>
+    <string name="tienda2">Tienda</string>
+    <string name="contador">0</string>
+    <string name="tx">0</string>
+    <string name="atras">ATRAS</string>
+    <string name="normal">Normal</string>
+    <string name="modo_prestigio">Modo prestigio</string>
+</resources>
