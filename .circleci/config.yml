@@ -1,0 +1,35 @@
+version: 2.1
+
+orbs:
+  android: circleci/android@2.0.0
+
+jobs:
+  build-and-test:
+    executor:
+      name: android/android-machine
+      tag: 2022.01.1
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+
+      # Ensure that Gradle Wrapper is executable
+      - run: chmod +x ./gradlew
+
+      - run: ./gradlew build sonarqube
+
+      # The next step will run the unit tests
+      - android/run-tests:
+          test-command: ./gradlew testDebug --continue
+
+      # Integration testing (Android calls them 'instrumentation tests')
+      # These ones have to be executed on a Android VM
+      - android/start-emulator-and-run-tests:
+          test-command: ./gradlew connectedAndroidTest
+          system-image: system-images;android-30;google_apis;x86
+
+# Invoke jobs via workflows
+workflows:
+  main:
+    jobs:
+      - build-and-test:
+          context: SonarCloud
