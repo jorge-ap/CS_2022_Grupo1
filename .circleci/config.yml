@@ -13,9 +13,14 @@ jobs:
       - checkout
 
       # Ensure that Gradle Wrapper is executable
-      - run: chmod +x ./gradlew
+      - run:
+          name: Check Gradle Wrapper permissions
+          command: chmod +x ./gradlew
 
-      - run: ./gradlew build sonarqube
+      # Run SonarQube static analysis (white box testing)
+      - run:
+          name: SonarQube (static code analysis)
+          command: ./gradlew build sonarqube
 
       # The next step will run the unit tests
       - android/run-tests:
