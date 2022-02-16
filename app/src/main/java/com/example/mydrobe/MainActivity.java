@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-        if (!file.exists() && checkPermissions()){s
+        if (!file.exists() && checkPermissions()){
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void clicker(View view) {
+    public void clicker() {
         usuario.clicar();
         txPuntos.setText(Integer.toString(usuario.getContador()));
         if (modo==0) {
