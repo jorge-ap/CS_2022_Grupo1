@@ -6,7 +6,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -41,18 +40,18 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_CODE = 1;
-    private static final int PERMISSION_REQUEST_CODE = 1;
-    private static final int PUNTOS_PARA_PRESTIGIO = 10000000;
-    private static final int elegirFichero = 10;
+    private static final int REGISTER_POINTS = 10000000;
+    private static final int SELECT_FILE = 10;
 
     int modo = 0;
     ArrayList<String> poolFrasesNormales;
     ArrayList<String> poolFrasesObscenas;
-    File fichero = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
+    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
     Usuario usuario = new Usuario();
 
     TextView txPuntos;
-    MediaPlayer mpNormal, mpObsceno;
+    private MediaPlayer mpNormal;
+    private MediaPlayer mpObscene;
     Drawable skin = null;
 
     int skinActual = 0 ;
@@ -62,31 +61,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            inicializarSistema();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        initializeSystem();
         setContentView(R.layout.activity_main);
-        txPuntos = (TextView) findViewById (R.id.tx_puntos);
+        txPuntos = findViewById (R.id.tx_puntos);
         txPuntos.setText(Integer.toString(usuario.getContador()));
         frasesPredeterminadas();
         mpNormal = MediaPlayer.create(this, R.raw.audiobtnnormal);
-        mpObsceno = MediaPlayer.create(this, R.raw.audiobtnobsceno);
+        mpObscene = MediaPlayer.create(this, R.raw.audiobtnobsceno);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        try {
-            guardarUsuario();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        saveUser();
     }
 
     private boolean checkPermissions(){
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if(androidx.core.content.ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
         else {
@@ -97,60 +88,57 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==event.KEYCODE_BACK){
+        if(keyCode==KeyEvent.KEYCODE_BACK){
             AlertDialog.Builder builder=new AlertDialog.Builder(this);
             builder.setMessage("¿Deseas salis de MYDrove?")
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent intent=new Intent(Intent.ACTION_MAIN);
-                            intent.addCategory(Intent.CATEGORY_HOME);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            try {
-                                guardarUsuario();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                    .setPositiveButton("Si", (dialogInterface, i) -> {
+                        Intent intent=new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_HOME);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        saveUser();
                     })
-                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
+                    .setNegativeButton("Cancelar", (dialogInterface, i) -> dialogInterface.dismiss());
                     builder.show();
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private void guardarUsuario() throws IOException {
-        ObjectOutputStream oos = null;
-        oos = new ObjectOutputStream(new FileOutputStream(fichero));
-        oos.writeObject(usuario);
-        oos.close();
+    private void saveUser() {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
+            oos.writeObject(usuario);
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void inicializarSistema() throws IOException, ClassNotFoundException { //Cargamos el ususario y las frases en el MainActivity..
+    private void initializeSystem()  { //Cargamos el ususario y las frases en el MainActivity..
         //Cargamos el usuario
-        long files = fichero.length();
+        long files = file.length();
         boolean x = files == 0;
         if(!x){
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fichero));
-            this.usuario = (Usuario) ois.readObject();
-            ois.close();
+            try {
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+                this.usuario = (Usuario) ois.readObject();
+                ois.close();
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
+
         }
-        else if (!fichero.exists()){
-            if (checkPermissions()) {
-                FileOutputStream fileOutputStream = null;
-                fichero.createNewFile();
+        if (!file.exists() && checkPermissions()){s
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
     }
 
-    public void cliker(View view) {
+    public void clicker(View view) {
         usuario.clicar();
         txPuntos.setText(Integer.toString(usuario.getContador()));
         if (modo==0) {
@@ -158,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             mpNormal.start();
         } else{
             fraseAleatoria(usuario.getPoolfrasesObscenas());
-            mpObsceno.start();
+            mpObscene.start();
         }
     }
 
@@ -375,10 +363,10 @@ public class MainActivity extends AppCompatActivity {
     private void cargarImagen(){
         Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/");
-        startActivityForResult(Intent.createChooser(intent,"Seleccione la galería"),elegirFichero);
+        startActivityForResult(Intent.createChooser(intent,"Seleccione la galería"),SELECT_FILE);
     }
 
-    //Transforma la imagen al tipo de fichero compatible con skin
+    //Transforma la imagen al tipo de file compatible con skin
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -467,10 +455,10 @@ public class MainActivity extends AppCompatActivity {
 
     //Permite al usuario reiniciar su progresso a cambio de obtener más puntos al hacer click permanentemente
     public void modoPrestigio(View view){
-        if(usuario.getContador() > PUNTOS_PARA_PRESTIGIO){
+        if(usuario.getContador() > REGISTER_POINTS){
             usuario.setModoPrestigio();
         }else{
-            Toast toast = Toast.makeText(this, "Consigue " + PUNTOS_PARA_PRESTIGIO + " puntos para desbloquear esta opción", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this, "Consigue " + REGISTER_POINTS + " puntos para desbloquear esta opción", Toast.LENGTH_LONG);
             toast.show();
         }
     }
