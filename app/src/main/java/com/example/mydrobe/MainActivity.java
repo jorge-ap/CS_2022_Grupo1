@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -142,22 +143,22 @@ public class MainActivity extends AppCompatActivity {
         usuario.clicar();
         txPuntos.setText(Integer.toString(usuario.getContador()));
         if (modo==0) {
-            fraseAleatoria(usuario.getPoolfrasesNormales());
+            randomSentence(usuario.getPoolfrasesNormales());
             mpNormal.start();
         } else{
-            fraseAleatoria(usuario.getPoolfrasesObscenas());
+            randomSentence(usuario.getPoolfrasesObscenas());
             mpObscene.start();
         }
     }
 
-    public void fraseAleatoria(@NonNull ArrayList<String> poolFrases) {
-        int RangoAleatorio = poolFrases.size();
+    public void randomSentence(@NonNull List<String> sentencesPool) {
+        int RangoAleatorio = sentencesPool.size();
         Random claseRandom = new Random(); // Esto crea una instancia de la Clase Random
         claseRandom.nextInt(RangoAleatorio);
-        String FraseMostrar = poolFrases.get(claseRandom.nextInt(RangoAleatorio));
-        TextView fraseAleatoria;
-        fraseAleatoria = (TextView) findViewById (R.id.tx_frases_bonitas);
-        fraseAleatoria.setText(FraseMostrar);
+        String FraseMostrar = sentencesPool.get(claseRandom.nextInt(RangoAleatorio));
+        TextView randomSentence;
+        randomSentence = (TextView) findViewById (R.id.tx_frases_bonitas);
+        randomSentence.setText(FraseMostrar);
     }
 
     /*
