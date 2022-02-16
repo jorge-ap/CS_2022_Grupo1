@@ -105,7 +105,7 @@
         android:layout_height="352dp"
         android:backgroundTint="#00FFFFFF"
         android:foreground="@drawable/efecto_btn_moneda"
-        android:onClick="cliker"
+        android:onClick="clicker"
         android:rotationX="3"
         app:iconTint="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"

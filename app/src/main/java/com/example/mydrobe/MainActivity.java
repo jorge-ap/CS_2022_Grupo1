@@ -5,8 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,13 +18,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.system.ErrnoException;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.material.snackbar.Snackbar;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_CODE = 1;
     private static final int REGISTER_POINTS = 10000000;
     private static final int SELECT_FILE = 10;
-
+    private Random random = new Random();
     int modo = 0;
     ArrayList<String> poolFrasesNormales;
     ArrayList<String> poolFrasesObscenas;
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer mpObscene;
     Drawable skin = null;
 
-    int skinActual = 0 ;
+    int skinActual = 0;
     Button buttonMain;
 
     @Override
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         initializeSystem();
         setContentView(R.layout.activity_main);
-        txPuntos = findViewById (R.id.tx_puntos);
+        txPuntos = findViewById(R.id.tx_puntos);
         txPuntos.setText(Integer.toString(usuario.getContador()));
         frasesPredeterminadas();
         mpNormal = MediaPlayer.create(this, R.raw.audiobtnnormal);
@@ -77,11 +80,10 @@ public class MainActivity extends AppCompatActivity {
         saveUser();
     }
 
-    private boolean checkPermissions(){
-        if(androidx.core.content.ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+    private boolean checkPermissions() {
+        if (androidx.core.content.ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             return true;
-        }
-        else {
+        } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_CODE);
             return false;
         }
@@ -89,18 +91,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK){
-            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("¿Deseas salis de MYDrove?")
                     .setPositiveButton("Si", (dialogInterface, i) -> {
-                        Intent intent=new Intent(Intent.ACTION_MAIN);
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
                         intent.addCategory(Intent.CATEGORY_HOME);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         saveUser();
                     })
                     .setNegativeButton("Cancelar", (dialogInterface, i) -> dialogInterface.dismiss());
-                    builder.show();
+            builder.show();
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -115,11 +117,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeSystem()  { //Cargamos el ususario y las frases en el MainActivity..
+    private void initializeSystem() { //Cargamos el ususario y las frases en el MainActivity..
         //Cargamos el usuario
         long files = file.length();
         boolean x = files == 0;
-        if(!x){
+        if (!x) {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
                 this.usuario = (Usuario) ois.readObject();
@@ -129,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-        if (!file.exists() && checkPermissions()){
+        if (!file.exists() && checkPermissions()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -139,35 +141,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void clicker() {
+    public void clicker(View view) {
         usuario.clicar();
         txPuntos.setText(Integer.toString(usuario.getContador()));
-        if (modo==0) {
-            randomSentence(usuario.getPoolfrasesNormales());
+        if (modo == 0) {
+            randomSentence(usuario.getNormalSentencePool());
             mpNormal.start();
-        } else{
-            randomSentence(usuario.getPoolfrasesObscenas());
+        } else {
+            randomSentence(usuario.getObsceneSentencePool());
             mpObscene.start();
         }
     }
 
     public void randomSentence(@NonNull List<String> sentencesPool) {
-        int RangoAleatorio = sentencesPool.size();
-        Random claseRandom = new Random(); // Esto crea una instancia de la Clase Random
-        claseRandom.nextInt(RangoAleatorio);
-        String FraseMostrar = sentencesPool.get(claseRandom.nextInt(RangoAleatorio));
-        TextView randomSentence;
-        randomSentence = (TextView) findViewById (R.id.tx_frases_bonitas);
-        randomSentence.setText(FraseMostrar);
+        int randomRange = sentencesPool.size();
+        int randomValue = random.nextInt(randomRange);
+        String sentence = sentencesPool.get(randomValue);
+        TextView randomSentence = findViewById(R.id.tx_frases_bonitas);
+        randomSentence.setText(sentence);
     }
 
     /*
-    ***********************************
-    *
-    * Setters y getters
-    *
-    * *********************************
-    */
+     ***********************************
+     *
+     * Setters y getters
+     *
+     * *********************************
+     */
 
     public int getModo() {
         return modo;
@@ -177,11 +177,11 @@ public class MainActivity extends AppCompatActivity {
         this.modo = modo;
     }
 
-    public ArrayList<String> getPoolFrasesNormales() {
+    public ArrayList<String> getNormalSentencePool() {
         return poolFrasesNormales;
     }
 
-    public ArrayList<String> getPoolFrasesObscenas() {
+    public ArrayList<String> getObsceneSentencePool() {
         return poolFrasesObscenas;
     }
 
@@ -202,53 +202,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-    ********************************
-    *
-    * metodos que cambian la interfaz
-    *
-    * *******************************
-    */
+     ********************************
+     *
+     * metodos que cambian la interfaz
+     *
+     * *******************************
+     */
 
     //Cambia la interfaz a la tienda
-    public void showTienda(View view) {
+    public void showTienda(@SuppressWarnings("UnusedParameters") View view) {
         setContentView(R.layout.interfaztienda);
         txPuntos = (TextView) findViewById(R.id.tx_puntos_tienda);
         txPuntos.setText(Integer.toString(usuario.getContador()));
     }
 
     //Cambia la interfaz a la tienda de skins
-    public void showTiendaSkins(View view) {
+    public void showSkinsStore(@SuppressWarnings("UnusedParameters") View view) {
         setContentView(R.layout.interfaztiendaskins);
-        /*txPuntos = (TextView) findViewById(R.id.tx_puntos_tienda);
-        txPuntos.setText(Integer.toString(usuario.getContador()));*/
-
     }
 
     //Cambia la interfaz al menu obsceno
-    public void showObsceno (View view) {
-        modo=1;
+    public void showObsceno(@SuppressWarnings("UnusedParameters") View view) {
+        modo = 1;
         setContentView(R.layout.interfazobscene);
         txPuntos = (TextView) findViewById(R.id.tx_puntos);
         txPuntos.setText(Integer.toString(usuario.getContador()));
     }
 
     //Cambia la interfaz al menu normal
-    public void showMenu (View view){
-        modo=0;
+    public void showMenu(@SuppressWarnings("UnusedParameters") View view) {
+        modo = 0;
         setContentView(R.layout.activity_main);
-        txPuntos = (TextView) findViewById (R.id.tx_puntos);
+        txPuntos = (TextView) findViewById(R.id.tx_puntos);
         txPuntos.setText(Integer.toString(usuario.getContador()));
         setSkin(view);
     }
 
     //Cambia la interfaz a el formulario para crear frases propias
-    public void showCrearFrase (View view) {
+    public void showCrearFrase(@SuppressWarnings("UnusedParameters") View view) {
         setContentView(R.layout.frases_custom);
     }
 
     //Vuelve a la interfaz anterior a tienda
-    public void atras (View view){
-        if (modo==0) {
+    public void atras(View view) {
+        if (modo == 0) {
             showMenu(view);
 
         } else
@@ -256,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Vuelve a la interfaz anterior a tienda skins
-    public void atras2 (View view){
+    public void atras2(View view) {
         showTienda(view);
 
     }
@@ -271,107 +268,94 @@ public class MainActivity extends AppCompatActivity {
      */
 
     //Establece la skin que el usuario tenga selecionada
-    public void setSkin(View view){
+    public void setSkin(View view) {
         buttonMain = findViewById(R.id.bt_moneda);
 
-        switch (skinActual){
+        switch (skinActual) {
             case 0:
                 buttonMain.setForeground(getDrawable(R.drawable.efecto_btn_moneda));
                 break;
-
             case 1:
-                    buttonMain.setForeground(getDrawable(R.drawable.skin_castana));
-                    usuario.getSkinsCompradas().add("Castaña");
-             break;
-
+                buttonMain.setForeground(getDrawable(R.drawable.skin_castana));
+                usuario.getSkinsCompradas().add("Castaña");
+                break;
             case 2:
-                    buttonMain.setForeground(getDrawable(R.drawable.skin_pikachu));
-                    usuario.getSkinsCompradas().add("Pikachu");
-
+                buttonMain.setForeground(getDrawable(R.drawable.skin_pikachu));
+                usuario.getSkinsCompradas().add("Pikachu");
                 break;
             case 3:
 
-                    buttonMain.setForeground(getDrawable(R.drawable.skin_steve));
-                    usuario.getSkinsCompradas().add("Steve");
-                    break;
+                buttonMain.setForeground(getDrawable(R.drawable.skin_steve));
+                usuario.getSkinsCompradas().add("Steve");
+                break;
             case 4:
-                    buttonMain.setForeground(getDrawable(R.drawable.skin_shrek));
-                    usuario.getSkinsCompradas().add("Shrek");
+                buttonMain.setForeground(getDrawable(R.drawable.skin_shrek));
+                usuario.getSkinsCompradas().add("Shrek");
                 break;
             case 5:
                 buttonMain.setForeground(skin);
+                break;
+            default:
+                System.err.println("Something has gone wrong");
                 break;
         }
     }
 
     //Cliker
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            pressed(view);
-        }
-    };
+    // TODO This is not used, it may be removed
+    View.OnClickListener onClickListener = this::pressed;
 
     //Permite al usuario comprar skins si tiene los puntos necesarios
-    public void pressed(View view){
-        switch(view.getId()) {
+    public void pressed(View view) {
+        switch (view.getId()) {
             case R.id.btn_defecto:
                 skinActual = 0;
                 break;
             case R.id.btn_skin_1:
-                if( usuario.getSkinsCompradas().contains("Castaña") ) {
-                    skinActual = 1;
-                }
-                else if (usuario.pago(500)) {
+                if (usuario.getSkinsCompradas().contains("Castaña") || usuario.pago(500)) {
                     skinActual = 1;
                 }
                 break;
             case R.id.btn_skin_2:
-                if( usuario.getSkinsCompradas().contains("Pikachu") ) {
-                    skinActual = 2;
-                }
-                else if (usuario.pago(500)) {
+                if (usuario.getSkinsCompradas().contains("Pikachu") || usuario.pago(500)) {
                     skinActual = 2;
                 }
                 break;
             case R.id.btn_skin_3:
-                if( usuario.getSkinsCompradas().contains("Steve") ) {
-                    skinActual = 3;
-                }
-                else  if (usuario.pago(500)) {
+                if (usuario.getSkinsCompradas().contains("Steve") || usuario.pago(500)) {
                     skinActual = 3;
                 }
                 break;
             case R.id.btn_skin_4:
-                if( usuario.getSkinsCompradas().contains("Shrek") ) {
-                    skinActual = 4;
-                }
-                else  if (usuario.pago(500)) {
+                if (usuario.getSkinsCompradas().contains("Shrek") || usuario.pago(500)) {
                     skinActual = 4;
                 }
                 break;
             case R.id.btn_galeria:
                 skinActual = 5;
                 cargarImagen();
-                if(skin == null){
+                if (skin == null) {
                     skinActual = 0;
                 }
+                break;
+            default:
+                System.err.println("Something has gone wrong");
                 break;
         }
     }
 
     //Permite cargar una imagen para ser utilizada como skin
-    private void cargarImagen(){
-        Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+    private void cargarImagen() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/");
-        startActivityForResult(Intent.createChooser(intent,"Seleccione la galería"),SELECT_FILE);
+        startActivityForResult(Intent.createChooser(intent, "Seleccione la galería"), SELECT_FILE);
     }
 
     //Transforma la imagen al tipo de file compatible con skin
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode==RESULT_OK){
+        if (resultCode == RESULT_OK) {
             try {
                 Uri ruta = data.getData();
                 InputStream imagen = getContentResolver().openInputStream(ruta);
@@ -380,8 +364,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-        }
-        else{
+        } else {
             skin = null;
         }
     }
@@ -394,8 +377,8 @@ public class MainActivity extends AppCompatActivity {
      */
 
     //Permite al usuario auimentar el numero de puntos obtenidos al hacer click a cambio de una cantidad de puntos
-    public void mejorarClicks(View view){
-        if(usuario.pago(usuario.getValorClick()*10)){
+    public void mejorarClicks(View view) {
+        if (usuario.pago(usuario.getValorClick() * 10)) {
             usuario.aplicarMejoraClicks();
             txPuntos.setText(Integer.toString(usuario.getContador()));
         } else {
@@ -403,62 +386,65 @@ public class MainActivity extends AppCompatActivity {
             mySnackbar.show();
         }
     }
+
     //Permite al usuario crear una frase propia para ser añadida a su pool de frases a cambio de una cantidad de puntos
-    public void crearFrase(View view){
+    public void crearFrase(View view) {
         EditText eText = (EditText) findViewById(R.id.frasesCreadas);
         String str = eText.getText().toString();
-        if (usuario.pago(50)){
-            if (modo==0) {
-                usuario.anadirFrase(usuario.getPoolfrasesNormales(), str);
-            } else{
-                usuario.anadirFrase(usuario.getPoolfrasesObscenas(), str);
+        if (usuario.pago(50)) {
+            if (modo == 0) {
+                usuario.anadirFrase(usuario.getNormalSentencePool(), str);
+            } else {
+                usuario.anadirFrase(usuario.getObsceneSentencePool(), str);
             }
             showTienda(view);
-        } else{
+        } else {
             Snackbar mySnackbar = Snackbar.make(view, "No tienes dinero suficiente", 1000);
             mySnackbar.show();
         }
     }
 
     //Permite al usuario agregar una frase aleatoria a su pool de frases a cambio de una cantidad de puntos
-    public void comprarFrase(View view){
+    public void comprarFrase(View view) {
         String frase;
-        if (usuario.pago(25)){
-            if (modo==0){
-                frase = usuario.yaEstaFrase(poolFrasesNormales,usuario.getPoolfrasesNormales());
-                usuario.anadirFrase(usuario.getPoolfrasesNormales(),frase);
+        if (usuario.pago(25)) {
+            if (modo == 0) {
+                frase = usuario.yaEstaFrase(poolFrasesNormales, usuario.getNormalSentencePool());
+                usuario.anadirFrase(usuario.getNormalSentencePool(), frase);
             } else {
-                frase = usuario.yaEstaFrase(poolFrasesObscenas,usuario.getPoolfrasesObscenas());
-                usuario.anadirFrase(usuario.getPoolfrasesObscenas(),frase);
-             } if (frase==null) {
+                frase = usuario.yaEstaFrase(poolFrasesObscenas, usuario.getObsceneSentencePool());
+                usuario.anadirFrase(usuario.getObsceneSentencePool(), frase);
+            }
+            if (frase == null) {
                 Snackbar mySnackbar = Snackbar.make(view, "Ya has desbloqueado todas las frases", 1000);
                 mySnackbar.show();
-                usuario.setContador(usuario.getContador()+30);
+                usuario.setContador(usuario.getContador() + 30);
             }
         }
     }
+
     //Establece las frases iniciales.
-    public void frasesPredeterminadas(){
-        String a="";
-        ArrayList<String> n=usuario.getPoolfrasesNormales();
+    public void frasesPredeterminadas() {
+        String a = "";
+        ArrayList<String> n = usuario.getNormalSentencePool();
         n.add(a);
-        ArrayList<String> o=usuario.getPoolfrasesObscenas();
+        ArrayList<String> o = usuario.getObsceneSentencePool();
         o.add(a);
         ArrayList<String> normales = new ArrayList<String>(
-                Arrays.asList("El único modo de hacer un gran trabajo es amar lo que haces","Cuanto más duramente trabajo, más suerte tengo",
-                        "La lógica te llevará de la a a la z. la imaginación te llevará a cualquier lugar","A veces la adversidad es lo que necesitas encarar para ser exitoso"));
+                Arrays.asList("El único modo de hacer un gran trabajo es amar lo que haces", "Cuanto más duramente trabajo, más suerte tengo",
+                        "La lógica te llevará de la a a la z. la imaginación te llevará a cualquier lugar", "A veces la adversidad es lo que necesitas encarar para ser exitoso"));
         setPoolFrasesNormales(normales);
         ArrayList<String> obscenas = new ArrayList<String>(
-                Arrays.asList("El metodo cascada es el mejor","ETA es una gran nación","Lo que nosotros hemos hecho, cosa que no hizo usted, es engañar a la gente",
-                        "Tú y yo tenemos una cita y tu ropa no está invitada.","Tienes cara de ser el 9 que le falta a mi 6."));
+                Arrays.asList("El metodo cascada es el mejor", "ETA es una gran nación", "Lo que nosotros hemos hecho, cosa que no hizo usted, es engañar a la gente",
+                        "Tú y yo tenemos una cita y tu ropa no está invitada.", "Tienes cara de ser el 9 que le falta a mi 6."));
         setPoolFrasesObscenas(obscenas);
     }
 
     //Permite al usuario reiniciar su progresso a cambio de obtener más puntos al hacer click permanentemente
-    public void modoPrestigio(View view){
-        if(usuario.getContador() > REGISTER_POINTS){
+    public void modoPrestigio(View view) {
+        if (usuario.getContador() > REGISTER_POINTS) {
             usuario.setModoPrestigio();
-        }else{
+        } else {
             Toast toast = Toast.makeText(this, "Consigue " + REGISTER_POINTS + " puntos para desbloquear esta opción", Toast.LENGTH_LONG);
             toast.show();
         }
@@ -473,20 +459,20 @@ public class MainActivity extends AppCompatActivity {
      */
 
     //Muestra al ususario una ayuda textual unica en cada interfaz.
-    public void ayuda(View view){
+    public void ayuda(View view) {
         TextView ab = findViewById(R.id.ayudaBoton);
         TextView af = findViewById(R.id.ayudaFrases);
         TextView ap = findViewById(R.id.ayudaPuntuacion);
         TextView at = findViewById(R.id.ayudaTienda);
         TextView ao = findViewById(R.id.modoObsceno);
         TextView ae = findViewById(R.id.ayudaEsc);
-        if(ab.getVisibility() == View.VISIBLE){ //si es Visible lo pones Gone
+        if (ab.getVisibility() == View.VISIBLE) { //si es Visible lo pones Gone
             ab.setVisibility(View.GONE);
             af.setVisibility(View.GONE);
             ap.setVisibility(View.GONE);
             at.setVisibility(View.GONE);
             ao.setVisibility(View.GONE);
-        }else{ // si no es Visible, lo pones
+        } else { // si no es Visible, lo pones
             ab.setVisibility(View.VISIBLE);
             af.setVisibility(View.VISIBLE);
             ap.setVisibility(View.VISIBLE);
@@ -496,41 +482,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void ACF(View view){
+    public void ACF(View view) {
         TextView ae = findViewById(R.id.ayudaEsc);
         TextView ac = findViewById(R.id.ayudaCrear);
-        if(ae.getVisibility() == View.VISIBLE){ //si es Visible lo pones Gone
+        if (ae.getVisibility() == View.VISIBLE) { //si es Visible lo pones Gone
             ae.setVisibility(View.GONE);
             ac.setVisibility(View.GONE);
-        }else{ // si no es Visible, lo pones
+        } else { // si no es Visible, lo pones
             ae.setVisibility(View.VISIBLE);
             ac.setVisibility(View.VISIBLE);
         }
     }
-    public void ACTS(View view){
+
+    public void ACTS(View view) {
         TextView ae = findViewById(R.id.defecto);
         TextView ac = findViewById(R.id.elegir);
-        if(ae.getVisibility() == View.VISIBLE){ //si es Visible lo pones Gone
+        if (ae.getVisibility() == View.VISIBLE) { //si es Visible lo pones Gone
             ae.setVisibility(View.GONE);
             ac.setVisibility(View.GONE);
-        }else{ // si no es Visible, lo pones
+        } else { // si no es Visible, lo pones
             ae.setVisibility(View.VISIBLE);
             ac.setVisibility(View.VISIBLE);
         }
     }
-    public void ACT(View view){
+
+    public void ACT(View view) {
         TextView ae = findViewById(R.id.generador);
         TextView ac = findViewById(R.id.creador);
         TextView af = findViewById(R.id.skins);
         TextView ad = findViewById(R.id.mb);
         TextView ag = findViewById(R.id.ayudaPrestigio);
-        if(ae.getVisibility() == View.VISIBLE){ //si es Visible lo pones Gone
+        if (ae.getVisibility() == View.VISIBLE) { //si es Visible lo pones Gone
             ae.setVisibility(View.GONE);
             ac.setVisibility(View.GONE);
             af.setVisibility(View.GONE);
             ad.setVisibility(View.GONE);
             ag.setVisibility(View.GONE);
-        }else{ // si no es Visible, lo pones
+        } else { // si no es Visible, lo pones
             ae.setVisibility(View.VISIBLE);
             ac.setVisibility(View.VISIBLE);
             af.setVisibility(View.VISIBLE);
@@ -540,10 +528,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     /*
      ********************************
      */
-
 
 
 }

@@ -29,11 +29,11 @@ private int contador =  0;
      * *********************************
      */
 
-    public ArrayList<String> getPoolfrasesNormales() {
+    public ArrayList<String> getNormalSentencePool() {
         return poolfrasesNormales;
     }
 
-    public ArrayList<String> getPoolfrasesObscenas() {
+    public ArrayList<String> getObsceneSentencePool() {
         return poolfrasesObscenas;
     }
 

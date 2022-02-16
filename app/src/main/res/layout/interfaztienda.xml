@@ -125,7 +125,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#E6E6E6"
-        android:onClick="showTiendaSkins"
+        android:onClick="showSkinsStore"
         android:text="Skins"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/img_toldo_tienda"
