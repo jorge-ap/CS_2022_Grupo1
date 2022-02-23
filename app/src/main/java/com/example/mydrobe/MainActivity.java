@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private Drawable skin = null;
 
     private int skinActual = 0;
-    private Button buttonMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
      * @param view The view of the instance
      */
     public void setSkin(View view) {
-        buttonMain = findViewById(R.id.bt_moneda);
+        Button buttonMain = findViewById(R.id.bt_moneda);
 
         switch (skinActual) {
             case 0:
