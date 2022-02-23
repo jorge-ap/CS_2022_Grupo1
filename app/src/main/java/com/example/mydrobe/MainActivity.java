@@ -18,7 +18,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.system.ErrnoException;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -39,6 +38,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,10 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private static final int REGISTER_POINTS = 10000000;
     private static final int SELECT_FILE = 10;
     private Random random = new Random();
-    int modo = 0;
-    ArrayList<String> poolFrasesNormales;
-    ArrayList<String> poolFrasesObscenas;
-    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
+    private int modo = 0;
+    private ArrayList<String> poolNormalSentences;
+    private ArrayList<String> poolObsceneSentences;
+    private final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
     Usuario usuario = new Usuario();
 
     TextView txPuntos;
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         initializeSystem();
         setContentView(R.layout.activity_main);
         txPuntos = findViewById(R.id.tx_puntos);
-        txPuntos.setText(Integer.toString(usuario.getContador()));
+        txPuntos.setText(String.valueOf(usuario.getContador()));
         frasesPredeterminadas();
         mpNormal = MediaPlayer.create(this, R.raw.audiobtnnormal);
         mpObscene = MediaPlayer.create(this, R.raw.audiobtnobsceno);
@@ -169,37 +169,15 @@ public class MainActivity extends AppCompatActivity {
      * *********************************
      */
 
-    public int getModo() {
-        return modo;
+
+    public void setpoolNormalSentences(ArrayList<String> poolNormalSentences) {
+        this.poolNormalSentences = poolNormalSentences;
     }
 
-    public void setModo(int modo) {
-        this.modo = modo;
+    public void setpoolObsceneSentences(ArrayList<String> poolObsceneSentences) {
+        this.poolObsceneSentences = poolObsceneSentences;
     }
 
-    public ArrayList<String> getNormalSentencePool() {
-        return poolFrasesNormales;
-    }
-
-    public ArrayList<String> getObsceneSentencePool() {
-        return poolFrasesObscenas;
-    }
-
-    public void setPoolFrasesNormales(ArrayList<String> poolFrasesNormales) {
-        this.poolFrasesNormales = poolFrasesNormales;
-    }
-
-    public void setPoolFrasesObscenas(ArrayList<String> poolFrasesObscenas) {
-        this.poolFrasesObscenas = poolFrasesObscenas;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
 
     /*
      ********************************
@@ -333,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_galeria:
                 skinActual = 5;
-                cargarImagen();
+                loadImage();
                 if (skin == null) {
                     skinActual = 0;
                 }
@@ -344,23 +322,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Permite cargar una imagen para ser utilizada como skin
-    private void cargarImagen() {
+    //Permite cargar una image para ser utilizada como skin
+    private void loadImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/");
         startActivityForResult(Intent.createChooser(intent, "Seleccione la galería"), SELECT_FILE);
     }
 
-    //Transforma la imagen al tipo de file compatible con skin
+    //Transforma la image al tipo de file compatible con skin
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             try {
-                Uri ruta = data.getData();
-                InputStream imagen = getContentResolver().openInputStream(ruta);
-                Bitmap vista = BitmapFactory.decodeStream(imagen);
-                skin = new BitmapDrawable(getResources(), vista);
+                Uri path = Objects.requireNonNull(data).getData();
+                InputStream image = getContentResolver().openInputStream(path);
+                Bitmap view = BitmapFactory.decodeStream(image);
+                skin = new BitmapDrawable(getResources(), view);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -380,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
     public void mejorarClicks(View view) {
         if (usuario.pago(usuario.getValorClick() * 10)) {
             usuario.aplicarMejoraClicks();
-            txPuntos.setText(Integer.toString(usuario.getContador()));
+            txPuntos.setText(String.valueOf(usuario.getContador()));
         } else {
             Snackbar mySnackbar = Snackbar.make(view, "No tienes dinero suficiente", 1000);
             mySnackbar.show();
@@ -409,10 +387,10 @@ public class MainActivity extends AppCompatActivity {
         String frase;
         if (usuario.pago(25)) {
             if (modo == 0) {
-                frase = usuario.yaEstaFrase(poolFrasesNormales, usuario.getNormalSentencePool());
+                frase = usuario.yaEstaFrase(poolNormalSentences, usuario.getNormalSentencePool());
                 usuario.anadirFrase(usuario.getNormalSentencePool(), frase);
             } else {
-                frase = usuario.yaEstaFrase(poolFrasesObscenas, usuario.getObsceneSentencePool());
+                frase = usuario.yaEstaFrase(poolObsceneSentences, usuario.getObsceneSentencePool());
                 usuario.anadirFrase(usuario.getObsceneSentencePool(), frase);
             }
             if (frase == null) {
@@ -430,14 +408,14 @@ public class MainActivity extends AppCompatActivity {
         n.add(a);
         ArrayList<String> o = usuario.getObsceneSentencePool();
         o.add(a);
-        ArrayList<String> normales = new ArrayList<String>(
+        ArrayList<String> normales = new ArrayList<>(
                 Arrays.asList("El único modo de hacer un gran trabajo es amar lo que haces", "Cuanto más duramente trabajo, más suerte tengo",
                         "La lógica te llevará de la a a la z. la imaginación te llevará a cualquier lugar", "A veces la adversidad es lo que necesitas encarar para ser exitoso"));
-        setPoolFrasesNormales(normales);
-        ArrayList<String> obscenas = new ArrayList<String>(
+        setpoolNormalSentences(normales);
+        ArrayList<String> obscenas = new ArrayList<>(
                 Arrays.asList("El metodo cascada es el mejor", "ETA es una gran nación", "Lo que nosotros hemos hecho, cosa que no hizo usted, es engañar a la gente",
                         "Tú y yo tenemos una cita y tu ropa no está invitada.", "Tienes cara de ser el 9 que le falta a mi 6."));
-        setPoolFrasesObscenas(obscenas);
+        setpoolObsceneSentences(obscenas);
     }
 
     //Permite al usuario reiniciar su progresso a cambio de obtener más puntos al hacer click permanentemente
@@ -465,7 +443,6 @@ public class MainActivity extends AppCompatActivity {
         TextView ap = findViewById(R.id.ayudaPuntuacion);
         TextView at = findViewById(R.id.ayudaTienda);
         TextView ao = findViewById(R.id.modoObsceno);
-        TextView ae = findViewById(R.id.ayudaEsc);
         if (ab.getVisibility() == View.VISIBLE) { //si es Visible lo pones Gone
             ab.setVisibility(View.GONE);
             af.setVisibility(View.GONE);
