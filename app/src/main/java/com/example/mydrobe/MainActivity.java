@@ -53,13 +53,13 @@ public class MainActivity extends AppCompatActivity {
     private final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
     private Usuario usuario = new Usuario();
 
-    TextView txPuntos;
+    private TextView txPuntos;
     private MediaPlayer mpNormal;
     private MediaPlayer mpObscene;
-    Drawable skin = null;
+    private Drawable skin = null;
 
-    int skinActual = 0;
-    Button buttonMain;
+    private int skinActual = 0;
+    private Button buttonMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +141,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Method to click
+     *
+     * @param view The view of the instance
+     */
     public void clicker(View view) {
         usuario.clicar();
         txPuntos.setText(Integer.toString(usuario.getContador()));
@@ -161,14 +166,6 @@ public class MainActivity extends AppCompatActivity {
         randomSentence.setText(sentence);
     }
 
-    /*
-     ***********************************
-     *
-     * Setters y getters
-     *
-     * *********************************
-     */
-
 
     public void setpoolNormalSentences(ArrayList<String> poolNormalSentences) {
         this.poolNormalSentences = poolNormalSentences;
@@ -178,28 +175,30 @@ public class MainActivity extends AppCompatActivity {
         this.poolObsceneSentences = poolObsceneSentences;
     }
 
-
-    /*
-     ********************************
-     *
-     * metodos que cambian la interfaz
-     *
-     * *******************************
+    /**
+     * Cambia la interfaz a la tienda
+     * @param view The view of the instance
      */
-
-    //Cambia la interfaz a la tienda
     public void showTienda(@SuppressWarnings("UnusedParameters") View view) {
         setContentView(R.layout.interfaztienda);
         txPuntos = (TextView) findViewById(R.id.tx_puntos_tienda);
         txPuntos.setText(Integer.toString(usuario.getContador()));
     }
 
-    //Cambia la interfaz a la tienda de skins
+    /**
+     * Cambia la interfaz a la tienda de skins
+     *
+     * @param view The view of the instance
+     */
     public void showSkinsStore(@SuppressWarnings("UnusedParameters") View view) {
         setContentView(R.layout.interfaztiendaskins);
     }
 
-    //Cambia la interfaz al menu obsceno
+    /**
+     * Cambia la interfaz al menu obsceno
+     *
+     * @param view The view of the instance
+     */
     public void showObsceno(@SuppressWarnings("UnusedParameters") View view) {
         modo = 1;
         setContentView(R.layout.interfazobscene);
@@ -207,7 +206,11 @@ public class MainActivity extends AppCompatActivity {
         txPuntos.setText(Integer.toString(usuario.getContador()));
     }
 
-    //Cambia la interfaz al menu normal
+    /**
+     * Cambia la interfaz al menu normal
+     *
+     * @param view The view of the instance
+     */
     public void showMenu(@SuppressWarnings("UnusedParameters") View view) {
         modo = 0;
         setContentView(R.layout.activity_main);
@@ -216,12 +219,20 @@ public class MainActivity extends AppCompatActivity {
         setSkin(view);
     }
 
-    //Cambia la interfaz a el formulario para crear frases propias
+    /**
+     * Cambia la interfaz a el formulario para crear frases propias
+     *
+     * @param view The view of the instance
+     */
     public void showCrearFrase(@SuppressWarnings("UnusedParameters") View view) {
         setContentView(R.layout.frases_custom);
     }
 
-    //Vuelve a la interfaz anterior a tienda
+    /**
+     * Vuelve a la interfaz anterior a tienda
+     *
+     * @param view The view of the instance
+     */
     public void atras(View view) {
         if (modo == 0) {
             showMenu(view);
@@ -230,22 +241,21 @@ public class MainActivity extends AppCompatActivity {
             showObsceno(view);
     }
 
-    //Vuelve a la interfaz anterior a tienda skins
+    /**
+     * Vuelve a la interfaz anterior a tienda skins
+     *
+     * @param view The view of the instance
+     */
     public void atras2(View view) {
         showTienda(view);
 
     }
 
-
-    /*
-     ********************************
+    /**
+     * Establece la skin que el usuario tenga selecionada
      *
-     * metodos que cambian la skin
-     *
-     * *******************************
+     * @param view The view of the instance
      */
-
-    //Establece la skin que el usuario tenga selecionada
     public void setSkin(View view) {
         buttonMain = findViewById(R.id.bt_moneda);
 
@@ -279,11 +289,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Cliker
-    // TODO This is not used, it may be removed
-    View.OnClickListener onClickListener = this::pressed;
-
-    //Permite al usuario comprar skins si tiene los puntos necesarios
+    /**
+     * Permite al usuario comprar skins si tiene los puntos necesarios
+     *
+     * @param view The view of the instance
+     */
     public void pressed(View view) {
         switch (view.getId()) {
             case R.id.btn_defecto:
@@ -346,13 +356,6 @@ public class MainActivity extends AppCompatActivity {
             skin = null;
         }
     }
-    /*
-     ********************************
-     *
-     * Otros metodos
-     *
-     * *******************************
-     */
 
     /**
      * Permite al usuario auimentar el numero de puntos obtenidos al hacer click a cambio de una cantidad de puntos
@@ -369,7 +372,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Permite al usuario crear una frase propia para ser añadida a su pool de frases a cambio de una cantidad de puntos
+    /**
+     * Permite al usuario crear una frase propia para ser añadida a su pool de frases a cambio de una cantidad de puntos
+     *
+     * @param view The view of the instance
+     */
     public void crearFrase(View view) {
         EditText eText = (EditText) findViewById(R.id.frasesCreadas);
         String str = eText.getText().toString();
@@ -386,7 +393,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Permite al usuario agregar una frase aleatoria a su pool de frases a cambio de una cantidad de puntos
+    /**
+     * Permite al usuario agregar una frase aleatoria a su pool de frases a cambio de una cantidad de puntos
+     *
+     * @param view The view of the instance
+     */
     public void comprarFrase(View view) {
         String frase;
         if (usuario.pago(25)) {
@@ -422,7 +433,11 @@ public class MainActivity extends AppCompatActivity {
         setpoolObsceneSentences(obscenas);
     }
 
-    //Permite al usuario reiniciar su progresso a cambio de obtener más puntos al hacer click permanentemente
+    /**
+     * Permite al usuario reiniciar su progresso a cambio de obtener más puntos al hacer click permanentemente
+     *
+     * @param view The view of the instance
+     */
     public void modoPrestigio(View view) {
         if (usuario.getContador() > REGISTER_POINTS) {
             usuario.setModoPrestigio();
@@ -432,15 +447,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*
-     ********************************
+    /**
+     * Muestra al ususario una ayuda textual unica en cada interfaz
      *
-     * Metodos de ayuda al usuario
-     *
-     * *******************************
+     * @param view The view of the instance
      */
-
-    //Muestra al ususario una ayuda textual unica en cada interfaz.
     public void ayuda(View view) {
         TextView ab = findViewById(R.id.ayudaBoton);
         TextView af = findViewById(R.id.ayudaFrases);
@@ -507,12 +518,4 @@ public class MainActivity extends AppCompatActivity {
             ag.setVisibility(View.VISIBLE);
         }
     }
-
-
-
-    /*
-     ********************************
-     */
-
-
 }
