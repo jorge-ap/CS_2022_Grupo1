@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.lang.Math;
+import java.util.List;
 
 public class Usuario  implements Serializable {
 
@@ -81,7 +82,7 @@ private int contador =  0;
     }
 
     //Comprueba si una frase ya se encuentra en la pool del usuario.
-    public String yaEstaFrase(ArrayList<String> frases, ArrayList<String> frases2){
+    public String yaEstaFrase(List<String> frases, ArrayList<String> frases2){
         boolean yaEsta;
         for (String delSistema: frases){
             yaEsta = frases2.contains(delSistema);

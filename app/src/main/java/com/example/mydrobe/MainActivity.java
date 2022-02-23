@@ -48,10 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private static final int SELECT_FILE = 10;
     private Random random = new Random();
     private int modo = 0;
-    private ArrayList<String> poolNormalSentences;
-    private ArrayList<String> poolObsceneSentences;
+    private List<String> poolNormalSentences;
+    private List<String> poolObsceneSentences;
     private final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
-    Usuario usuario = new Usuario();
+    private Usuario usuario = new Usuario();
 
     TextView txPuntos;
     private MediaPlayer mpNormal;
@@ -354,7 +354,11 @@ public class MainActivity extends AppCompatActivity {
      * *******************************
      */
 
-    //Permite al usuario auimentar el numero de puntos obtenidos al hacer click a cambio de una cantidad de puntos
+    /**
+     * Permite al usuario auimentar el numero de puntos obtenidos al hacer click a cambio de una cantidad de puntos
+     *
+     * @param view The viwe of the instance
+     */
     public void mejorarClicks(View view) {
         if (usuario.pago(usuario.getValorClick() * 10)) {
             usuario.aplicarMejoraClicks();
