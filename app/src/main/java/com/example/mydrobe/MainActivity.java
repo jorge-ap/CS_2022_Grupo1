@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private int modo = 0;
     private List<String> poolNormalSentences;
     private List<String> poolObsceneSentences;
-    private final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
+    private final File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
     private Usuario usuario = new Usuario();
 
     private TextView txPuntos;
