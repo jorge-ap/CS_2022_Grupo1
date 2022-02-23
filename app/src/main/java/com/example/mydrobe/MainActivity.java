@@ -166,11 +166,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setpoolNormalSentences(ArrayList<String> poolNormalSentences) {
+    public void setpoolNormalSentences(List<String> poolNormalSentences) {
         this.poolNormalSentences = poolNormalSentences;
     }
 
-    public void setpoolObsceneSentences(ArrayList<String> poolObsceneSentences) {
+    public void setpoolObsceneSentences(List<String> poolObsceneSentences) {
         this.poolObsceneSentences = poolObsceneSentences;
     }
 
