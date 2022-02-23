@@ -2,6 +2,7 @@ package com.example.mydrobe;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.experimental.Experimental;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -18,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -40,8 +42,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final Logger LOGGER = Logger.getLogger(MainActivity.class.getName());
 
     private static final int PERMISSION_CODE = 1;
     private static final int REGISTER_POINTS = 10000000;
@@ -283,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
                 buttonMain.setForeground(skin);
                 break;
             default:
-                System.err.println("Something has gone wrong");
+                LOGGER.log(Level.WARNING,"Something has gone wrong");
                 break;
         }
     }
@@ -326,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             default:
-                System.err.println("Something has gone wrong");
+                LOGGER.log(Level.WARNING,"Something has gone wrong");
                 break;
         }
     }
