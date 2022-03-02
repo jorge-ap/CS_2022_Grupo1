@@ -1,5 +1,9 @@
 package com.example.mydrobe;
 
+import static android.os.Environment.getExternalStoragePublicDirectory;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -7,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -54,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private int modo = 0;
     private List<String> poolNormalSentences;
     private List<String> poolObsceneSentences;
-    private final File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
+    public final File fichero = new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "usuario.bat");
     private Usuario usuario = new Usuario();
 
     private TextView txPuntos;
@@ -111,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveUser() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fichero))) {
             oos.writeObject(usuario);
         } catch (IOException e) {
             e.printStackTrace();
@@ -120,19 +125,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeSystem() { //Cargamos el ususario y las frases en el MainActivity..
         //Cargamos el usuario
-        long files = file.length();
+        long files = fichero.length();
         boolean x = files == 0;
         if (!x) {
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fichero))) {
                 this.usuario = (Usuario) ois.readObject();
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
 
         }
-        if (!file.exists() && checkPermissions()) {
+        if (!fichero.exists() && checkPermissions()) {
             try {
-                boolean fileCreated = file.createNewFile();
+                fichero.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -335,7 +340,26 @@ public class MainActivity extends AppCompatActivity {
     private void loadImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/");
-        startActivityForResult(Intent.createChooser(intent, "Seleccione la galería"), SELECT_FILE);
+
+
+        ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        try {
+                            Uri path = Objects.requireNonNull(result.getData()).getData();
+                            InputStream image = getContentResolver().openInputStream(path);
+                            Bitmap view = BitmapFactory.decodeStream(image);
+                            skin = new BitmapDrawable(getResources(), view);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        skin = null;
+                    }
+                });
+        Intent chooser = Intent.createChooser(intent, "Seleccione la galería");
+        someActivityResultLauncher.launch(chooser);
     }
 
     //Transforma la image al tipo de file compatible con skin
