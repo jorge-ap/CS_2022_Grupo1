@@ -1,5 +1,9 @@
 package com.example.mydrobe;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -336,33 +340,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Permite cargar una image para ser utilizada como skin
-    private void loadImage() {
+    ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    try {
+                        Uri path = Objects.requireNonNull(result.getData()).getData();
+                        InputStream image = getContentResolver().openInputStream(path);
+                        Bitmap view = BitmapFactory.decodeStream(image);
+                        skin = new BitmapDrawable(getResources(), view);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    skin = null;
+                }
+            });
+
+    public void loadImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/");
-
-
-        ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        try {
-                            Uri path = Objects.requireNonNull(result.getData()).getData();
-                            InputStream image = getContentResolver().openInputStream(path);
-                            Bitmap view = BitmapFactory.decodeStream(image);
-                            skin = new BitmapDrawable(getResources(), view);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        skin = null;
-                    }
-                });
-        Intent chooser = Intent.createChooser(intent, "Seleccione la galería");
-        someActivityResultLauncher.launch(chooser);
+        activityLauncher.launch(intent);
     }
 
-    //Transforma la image al tipo de file compatible con skin
+    // Transforma la image al tipo de file compatible con skin
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
