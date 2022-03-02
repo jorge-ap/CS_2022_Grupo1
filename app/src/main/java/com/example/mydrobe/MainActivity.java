@@ -111,10 +111,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveUser() {
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(usuario);
-            oos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -125,10 +123,8 @@ public class MainActivity extends AppCompatActivity {
         long files = file.length();
         boolean x = files == 0;
         if (!x) {
-            try {
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 this.usuario = (Usuario) ois.readObject();
-                ois.close();
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
@@ -136,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (!file.exists() && checkPermissions()) {
             try {
-                file.createNewFile();
+                boolean fileCreated = file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
