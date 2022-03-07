@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_CODE = 1;
     private static final int REGISTER_POINTS = 10000000;
-    private static final int SELECT_FILE = 10;
     private Random random = new Random();
     private int modo = 0;
     private List<String> poolNormalSentences;
