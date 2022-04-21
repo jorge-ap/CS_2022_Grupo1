@@ -170,6 +170,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public List<String> getPoolNormalSentences() {
+        return poolNormalSentences;
+    }
+
     public void setpoolNormalSentences(List<String> poolNormalSentences) {
         this.poolNormalSentences = poolNormalSentences;
     }
