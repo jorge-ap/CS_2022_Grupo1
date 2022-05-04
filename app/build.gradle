@@ -5,6 +5,15 @@ plugins {
 android {
     compileSdk 31
 
+    sourceSets {
+        main.output {
+            output.resourcesDir("src/main/java")
+        }
+        test.output {
+            output.resourcesDir("src/test/java/resources")
+        }
+    }
+
     defaultConfig {
         applicationId "com.example.mydrobe"
         minSdk 28
@@ -32,13 +41,34 @@ android {
     }
 }
 
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     testImplementation "org.mockito:mockito-core:4.4.0"
     testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'io.cucumber:cucumber-java:7.0.0'
 }
+
+task cucumber() {
+    dependsOn assemble
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty', '--glue', 'src/test/java/resources']
+        }
+    }
+}
+
