@@ -6,11 +6,15 @@ android {
     compileSdk 31
 
     sourceSets {
-        main.output {
-            output.resourcesDir("src/main/java")
+        main {
+            java {
+                srcDir 'src/test/java'
+            }
         }
-        test.output {
-            output.resourcesDir("src/test/java/resources")
+        test {
+            java {
+                srcDir 'src/test/resources'
+            }
         }
     }
 
@@ -39,27 +43,28 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-}
 
-
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
+    configurations {
+        cucumberRuntime {
+            extendsFrom testImplementation
+        }
     }
+
+    dependencies {
+        implementation 'androidx.appcompat:appcompat:1.4.1'
+        implementation 'com.google.android.material:material:1.5.0'
+        implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+        testImplementation 'junit:junit:4.13.2'
+        androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+        androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+        testImplementation "org.mockito:mockito-core:4.4.0"
+        testImplementation 'org.hamcrest:hamcrest:2.2'
+        testImplementation "io.cucumber:cucumber-java:7.3.4"
+        testImplementation "io.cucumber:cucumber-junit:4.2.3"
+    }
+
 }
 
-
-dependencies {
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    testImplementation "org.mockito:mockito-core:4.4.0"
-    testImplementation 'org.hamcrest:hamcrest:2.2'
-    testImplementation 'io.cucumber:cucumber-java:7.0.0'
-}
 
 task cucumber() {
     dependsOn assemble
@@ -67,8 +72,15 @@ task cucumber() {
         javaexec {
             main = "io.cucumber.core.cli.Main"
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = ['--plugin', 'pretty', '--glue', 'src/test/java/resources']
+            args = ['--plugin', 'pretty', '--glue', "com.example.mydrobe.cucumber" ,'src/test/java/com/example/mydrobe/resources']
         }
     }
+}
+
+dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    implementation 'junit:junit:4.13.2'
+    implementation "io.cucumber:cucumber-java:7.3.4"
+    implementation "io.cucumber:cucumber-junit:4.2.3"
 }
 
