@@ -217,4 +217,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.889" />
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="mejorarClicks2"
+        android:text="COMPRAR MEJORA PLUS"
+        android:textSize="12sp"
+        tools:layout_editor_absoluteX="117dp"
+        tools:layout_editor_absoluteY="81dp"
+        tools:ignore="MissingConstraints" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

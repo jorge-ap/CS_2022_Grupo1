@@ -391,6 +391,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void mejorarClicks2(View view) {
+        if (usuario.pago(usuario.getValorClick() * 100)) {
+            usuario.aplicarMejoraClicksPlus();
+            txPuntos.setText(String.valueOf(usuario.getContador()));
+        } else {
+            Snackbar mySnackbar = Snackbar.make(view, "No tienes dinero suficiente", 1000);
+            mySnackbar.show();
+        }
+    }
+
     /**
      * Permite al usuario crear una frase propia para ser añadida a su pool de frases a cambio de una cantidad de puntos
      *
