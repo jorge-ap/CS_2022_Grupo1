@@ -151,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
      */
     public void clicker(View view) {
         usuario.clicar();
+        if (usuario.getContador()==50){
+            txPuntos.setText("CREA TU FRASE");
+        }
         txPuntos.setText(Integer.toString(usuario.getContador()));
         if (modo == 0) {
             randomSentence(usuario.getNormalSentencePool());
@@ -169,6 +172,10 @@ public class MainActivity extends AppCompatActivity {
         randomSentence.setText(sentence);
     }
 
+
+    public List<String> getPoolNormalSentences() {
+        return poolNormalSentences;
+    }
 
     public void setpoolNormalSentences(List<String> poolNormalSentences) {
         this.poolNormalSentences = poolNormalSentences;
@@ -382,11 +389,13 @@ public class MainActivity extends AppCompatActivity {
      * @param view The viwe of the instance
      */
     public void mejorarClicks(View view) {
+        int a = usuario.getValorClick() * 10;
+
         if (usuario.pago(usuario.getValorClick() * 10)) {
             usuario.aplicarMejoraClicks();
             txPuntos.setText(String.valueOf(usuario.getContador()));
         } else {
-            Snackbar mySnackbar = Snackbar.make(view, "No tienes dinero suficiente", 1000);
+            Snackbar mySnackbar = Snackbar.make(view, "No tienes dinero suficiente. Te hacen falta " + a + " monedas", 1000);
             mySnackbar.show();
         }
     }
@@ -417,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
             }
             showTienda(view);
         } else {
-            Snackbar mySnackbar = Snackbar.make(view, "No tienes dinero suficiente", 1000);
+            Snackbar mySnackbar = Snackbar.make(view, "No tienes dinero suficiente. Te hacen falta 50 monedas", 1000);
             mySnackbar.show();
         }
     }
