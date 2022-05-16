@@ -47,6 +47,9 @@ jobs:
       - run:
           name: Run Android Unit Tests
           command: ./gradlew testDebug --continue
+      - run:
+          name: Run Cucumber BDD Tests
+          command: ./gradlew :app:testDebugUnitTest --tests "com.example.mydrobe.CucumberUnitTestsRunner"
 
   ui-testing-calabash:
     executor:
