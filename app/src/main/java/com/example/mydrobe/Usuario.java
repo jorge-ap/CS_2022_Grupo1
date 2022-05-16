@@ -81,6 +81,10 @@ private int contador =  0;
         this.setValorClick((int) Math.round(valorClick*1.5));
     }
 
+    public void aplicarMejoraClicksPlus() {
+        this.setValorClick((int) Math.round(valorClick*15));
+    }
+
     //Comprueba si una frase ya se encuentra en la pool del usuario.
     public String yaEstaFrase(List<String> frases, ArrayList<String> frases2){
         boolean yaEsta;

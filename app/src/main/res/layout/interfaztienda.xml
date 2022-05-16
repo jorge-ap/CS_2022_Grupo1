@@ -217,4 +217,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.889" />
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="106dp"
+        android:layout_marginBottom="65dp"
+        android:onClick="mejorarClicks2"
+        android:text="COMPRAR MEJORA PLUS"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_toldo_tienda"
+        app:layout_constraintStart_toStartOf="@+id/img_toldo_tienda"
+        tools:ignore="MissingConstraints" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
