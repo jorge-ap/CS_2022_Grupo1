@@ -45,11 +45,8 @@ jobs:
       - attach_workspace:
             at: .
       - run:
-          name: Run Android Unit Tests
-          command: ./gradlew testDebug --continue
-      - run:
-          name: Run Cucumber BDD Tests
-          command: ./gradlew :app:testDebugUnitTest --tests "com.example.mydrobe.CucumberUnitTestsRunner"
+          name: Run Unit Tests (Cucumber BDD testing & common JUnit Unit Tests)
+          command: ./gradlew testDebug --continue --info --rerun-tasks
 
   ui-testing-calabash:
     executor:
