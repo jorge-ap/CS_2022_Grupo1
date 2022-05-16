@@ -1,40 +1,108 @@
 version: 2.1
 
 orbs:
-  android: circleci/android@2.0.0
+  android: circleci/android@2.0.3
 
 jobs:
-  build-and-test:
-    executor:
-      name: android/android-machine
-      tag: 2022.01.1
+  first-steps-and-build-apk:
+    docker:
+      - image: cimg/android:2022.04
+    resource_class: large
     steps:
-      # Checkout the code as the first step.
       - checkout
 
-      # Ensure that Gradle Wrapper is executable
       - run:
           name: Check Gradle Wrapper permissions
           command: chmod +x ./gradlew
 
-      # Run SonarQube static analysis (white box testing)
+      - run:
+          name: Build Debuggable APK from Android App
+          command: ./gradlew assembleDebug
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  code-analysis:
+    docker:
+      - image: cimg/android:2022.04
+    resource_class: large
+    steps:
+      - attach_workspace:
+            at: .
       - run:
           name: SonarQube (static code analysis)
-          command: ./gradlew build sonarqube
+          command: |
+            ls -a
+            ./gradlew build sonarqube
 
-      # The next step will run the unit tests
-      - android/run-tests:
-          test-command: ./gradlew testDebug --continue
+  unit-testing:
+    docker:
+      - image: cimg/android:2022.04
+    resource_class: large
+    steps:
+      - attach_workspace:
+            at: .
+      - run:
+          name: Run Android Unit Tests
+          command: ./gradlew testDebug --continue
 
-      # Integration testing (Android calls them 'instrumentation tests')
-      # These ones have to be executed on a Android VM
-      - android/start-emulator-and-run-tests:
-          test-command: ./gradlew connectedAndroidTest
-          system-image: system-images;android-30;google_apis;x86
+  ui-testing-calabash:
+    executor:
+      name: android/android-machine
+      resource-class: large
+      tag: 2021.10.1
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install Ruby Gems for Cucumber 3 and Calabash Android
+          command: |
+            rvm use 2.7.0
+            echo y; gem install cucumber -v 3.2.0
+            gem install calabash-android
+      - run:
+          name: Create AVD and accept all Android SDK licenses
+          command: |
+            yes | sdkmanager --licenses || true
+            sdkmanager "system-images;android-28;google_apis;x86_64"
+            echo "no" | avdmanager --verbose create avd -n test -k "system-images;android-28;google_apis;x86_64"
+      - run:
+          name: Execute "Resign" operation (Calabash)
+          command: |
+            keytool -genkey -alias androiddebugkey -keystore ~/.android/debug.keystore -storetype PKCS12 -keyalg RSA -storepass android -keysize 2048 -dname "CN=Android Debug,O=Android,C=US"
+            rvm use 2.7.0
+            cd ~/project/app/src/androidTest/calabashTests
+            calabash-android resign ~/project/app/build/outputs/apk/debug/app-debug.apk
+      - android/start-emulator:
+          avd-name: test
+          no-window: true
+          post-emulator-launch-assemble-command: ''
+          restore-gradle-cache-post-emulator-launch: false
+      - android/wait-for-emulator
+      - run:
+          name: Install resigned app into Android Emulator
+          command: adb install -r ~/project/app/build/outputs/apk/debug/app-debug.apk
+      - run:
+          name: Execute Calabash Android tests
+          command: |
+            rvm use 2.7.0
+            cd ~/project/app/src/androidTest/calabashTests
+            calabash-android run ~/project/app/build/outputs/apk/debug/app-debug.apk
 
 # Invoke jobs via workflows
 workflows:
   main:
     jobs:
-      - build-and-test:
-          context: SonarCloud
+      - first-steps-and-build-apk
+      - code-analysis:
+         context: SonarCloud
+         requires:
+           - first-steps-and-build-apk
+      - unit-testing:
+         requires:
+           - first-steps-and-build-apk
+      - ui-testing-calabash:
+         requires:
+           - first-steps-and-build-apk
