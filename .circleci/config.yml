@@ -45,8 +45,8 @@ jobs:
       - attach_workspace:
             at: .
       - run:
-          name: Run Android Unit Tests
-          command: ./gradlew testDebug --continue
+          name: Run Unit Tests (Cucumber BDD testing & common JUnit Unit Tests)
+          command: ./gradlew testDebug --continue --info --rerun-tasks
 
   ui-testing-calabash:
     executor:
