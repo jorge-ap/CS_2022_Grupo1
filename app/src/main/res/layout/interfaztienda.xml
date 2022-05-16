@@ -221,11 +221,13 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="106dp"
+        android:layout_marginBottom="65dp"
         android:onClick="mejorarClicks2"
         android:text="COMPRAR MEJORA PLUS"
         android:textSize="12sp"
-        tools:layout_editor_absoluteX="117dp"
-        tools:layout_editor_absoluteY="81dp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_toldo_tienda"
+        app:layout_constraintStart_toStartOf="@+id/img_toldo_tienda"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
